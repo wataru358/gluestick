@@ -19,6 +19,7 @@ const spawnWithErrorHandling = (...args) => {
 // Set dist-tag
 let tagname = 'latest'; // stable
 
+console.log({ version });
 if (version.includes('-')) { // pre-release
   const regex = version.match(/-(.+)\./);
   if (regex) {
