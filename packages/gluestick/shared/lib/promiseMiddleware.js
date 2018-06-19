@@ -15,6 +15,27 @@ const promiseMiddleware: PromiseMiddleware = client => () => next => action => {
 
   next({ ...rest, type: INIT });
 
+  if(Array.isArray(promise)) {
+
+    const promiseArray = promise.map(p => {
+      typeof p === 'function' ? p(client) : p;
+    });
+
+    return Promise
+      .all(promiseArray)
+      .then(
+      payload => {
+        next({ ...rest, payload, type: SUCCESS });
+        return payload || true;
+      },
+      error => {
+        next({ ...rest, error, type: FAILURE });
+        return false;
+      },
+    )
+
+  }
+
   const getPromise: Function =
     typeof promise === 'function' ? promise : () => promise;
 

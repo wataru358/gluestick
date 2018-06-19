@@ -62,6 +62,7 @@ describe('config/compileWebpackConfig', () => {
     });
 
     it('returns the correct client config', () => {
+
       expect(
         replacePaths(compileWebpackConfig(logger, [], gluestickConfig).client),
       ).toMatchSnapshot();
@@ -86,6 +87,8 @@ describe('config/compileWebpackConfig', () => {
     });
 
     it('returns the correct server config', () => {
+      console.log(process.cwd());
+      console.log(compileWebpackConfig(logger, [], gluestickConfig).server);
       expect(
         replacePaths(compileWebpackConfig(logger, [], gluestickConfig).server),
       ).toMatchSnapshot();
