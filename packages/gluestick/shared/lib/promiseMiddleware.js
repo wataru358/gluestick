@@ -2,8 +2,8 @@
 
 import type { PromiseMiddleware } from '../types';
 
-const promiseMiddleware: PromiseMiddleware = client => () => next => action => {
-  const { promise, type, ...rest } = action;
+const promiseMiddleware: PromiseMiddleware = client => (dispatch, getState) => next => action => {
+  const { promise, type, formatter, ...rest } = action;
 
   if (!promise) {
     return next(action);
@@ -24,7 +24,8 @@ const promiseMiddleware: PromiseMiddleware = client => () => next => action => {
     return Promise
       .all(promiseArray)
       .then(
-        payload => {
+        res => {
+          const payload = formatter && typeof formatter === 'function' ? formatter(res, getState) : res;
           next({ ...rest, payload, type: SUCCESS });
           return payload || true;
         },
@@ -33,14 +34,14 @@ const promiseMiddleware: PromiseMiddleware = client => () => next => action => {
           return false;
         },
       )
-
   }
 
   const getPromise: Function =
     typeof promise === 'function' ? promise : () => promise;
 
   return getPromise(client).then(
-    payload => {
+    res => {
+      const payload = formatter && typeof formatter === 'function' ? formatter(res, getState) : res;
       next({ ...rest, payload, type: SUCCESS });
       return payload || true;
     },
